@@ -1,0 +1,51 @@
+#include <stdio.h>
+
+char * p_dbase = "DBASE_NAME@localhost:5432";	//"tcp:postgresql://localhost:5432/DB1_lab02";
+char * p_user = "USERNAME";
+char * p_pass = "PASS";
+
+EXEC SQL BEGIN DECLARE SECTION;
+	char dbname[1024];
+	char connection_string[128];
+	char user[64];
+	char password[32];
+	char username[30];
+	char catalog[100];
+	char database[100];
+	char query[100];
+	char schema[100];
+	char schemas[100];
+EXEC SQL END DECLARE SECTION;
+
+int main()
+{
+
+	printf("\nWartosci funkcji informacyjnych typu current_\n\n");
+
+	// initialize SQL variable
+	strcpy(connection_string,p_dbase);
+	strcpy(user,p_user);
+	strcpy(password,p_pass);
+
+	EXEC SQL CONNECT TO :connection_string AS conn  USER :user USING :password;
+
+	// print name of database
+	EXEC SQL SELECT current_database() INTO :dbname;
+	EXEC SQL SELECT current_user INTO :username;
+	EXEC SQL SELECT current_catalog INTO :catalog;
+	EXEC SQL SELECT current_query() INTO :query;
+	EXEC SQL SELECT current_schema() INTO :schema;
+	EXEC SQL SELECT current_schemas(true) INTO :schemas;
+
+	printf("current database=%s \n", dbname);
+	printf("current user=%s \n", username);
+	printf("current catalog=%s \n", catalog);
+	printf("current query=%s \n", query);
+	printf("current schema=%s \n", schema);
+	printf("current schemas=%s \n", schemas);
+
+    	
+	// close all connection
+	EXEC SQL DISCONNECT ALL;
+	return 0;
+}
